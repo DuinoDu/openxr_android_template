@@ -12,3 +12,8 @@ Project for {{crate_name}}
 
 ./gradlew installDebug      # install debug apk on device
 ```
+
+Use this template project by:
+```
+cargo generate https://github.com/DuinoDu/openxr_android_template
+```
