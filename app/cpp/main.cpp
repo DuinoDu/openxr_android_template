@@ -4,8 +4,7 @@
 #include "platform.hpp"
 
 #include "openxr_program.hpp"
-
-#include <spdlog/spdlog.h>
+#include "log.hpp"
 
 struct AndroidAppState {
   bool resumed = false;
@@ -15,33 +14,33 @@ static void AppHandleCmd(struct android_app *app, int32_t cmd) {
   auto *app_state = reinterpret_cast<AndroidAppState *>(app->userData);
   switch (cmd) {
     case APP_CMD_START: {
-      spdlog::info("APP_CMD_START onStart()");
+      Log->info("APP_CMD_START onStart()");
       break;
     }
     case APP_CMD_RESUME: {
-      spdlog::info("APP_CMD_RESUME onResume()");
+      Log->info("APP_CMD_RESUME onResume()");
       app_state->resumed = true;
       break;
     }
     case APP_CMD_PAUSE: {
-      spdlog::info("APP_CMD_PAUSE onPause()");
+      Log->info("APP_CMD_PAUSE onPause()");
       app_state->resumed = false;
       break;
     }
     case APP_CMD_STOP: {
-      spdlog::info("APP_CMD_STOP onStop()");
+      Log->info("APP_CMD_STOP onStop()");
       break;
     }
     case APP_CMD_DESTROY: {
-      spdlog::info("APP_CMD_DESTROY onDestroy()");
+      Log->info("APP_CMD_DESTROY onDestroy()");
       break;
     }
     case APP_CMD_INIT_WINDOW: {
-      spdlog::info("APP_CMD_INIT_WINDOW surfaceCreated()");
+      Log->info("APP_CMD_INIT_WINDOW surfaceCreated()");
       break;
     }
     case APP_CMD_TERM_WINDOW: {
-      spdlog::info("APP_CMD_TERM_WINDOW surfaceDestroyed()");
+      Log->info("APP_CMD_TERM_WINDOW surfaceDestroyed()");
       break;
     }
   }
@@ -68,6 +67,7 @@ void android_main(struct android_app *app) {
     program->InitializeSession();
     program->CreateSwapchains();
     while (app->destroyRequested == 0) {
+      Log->info("in main loop");
       for (;;) {
         int events;
         struct android_poll_source *source;
@@ -92,8 +92,8 @@ void android_main(struct android_app *app) {
 
     app->activity->vm->DetachCurrentThread();
   } catch (const std::exception &ex) {
-    spdlog::error(ex.what());
+    Log->error(ex.what());
   } catch (...) {
-    spdlog::error("Unknown Error");
+    Log->error("Unknown Error");
   }
 }
